@@ -1,0 +1,21 @@
+﻿@addTagHelper *, AuthoringTagHelpers
+
+
+@*@using (Html.BeginForm("List", "Blog", FormMethod.Get))
+{
+    <!-- Bu bir veri alma metodudur ama bunun yerine tag helperlar kullanılmalı.-->
+    <div class="card">
+        <div class="card-body">
+            @Html.TextBox("q", null, new { @class = "form-conrtol" }) 
+            <form class="form-inline">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+}
+*@
+
+<form asp-controller="Home" asp-action="GetByNameDorm" method="get">
+    <input name="key">
+    <button type="submit">Test</button>
+</form>

@@ -1,0 +1,23 @@
+﻿@model IEnumerable<DBFirstAppEF.Models.Dorm>
+
+@*@{
+    ViewData["Title"] = "Index";
+}
+<ul>
+    @foreach (var dorm in ViewData["students"] as IList<Dorm>)
+    {
+        <li>
+            @dorm.Name
+        </li>
+    }
+</ul>*@
+
+@if(Model != null)
+{
+    @foreach (var dorm in Model)
+{
+    <li>
+        @dorm.Name
+    </li>
+}
+}
