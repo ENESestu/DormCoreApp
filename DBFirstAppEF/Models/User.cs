@@ -9,6 +9,7 @@ public partial class User
 {
     [Key]
     [Column("ID")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     [Column("FIRST_NAME")]
@@ -44,12 +45,12 @@ public partial class User
     [Column("PICTURE_FILE_PATH")]
     [StringLength(100)]
     [Unicode(false)]
-    public string PictureFilePath { get; set; } = null!;
+    public string? PictureFilePath { get; set; }
 
     [Column("IS_DELETED")]
     [StringLength(2)]
     [Unicode(false)]
-    public string IsDeleted { get; set; } = null!;
+    public string? IsDeleted { get; set; }
 
     [InverseProperty("User")]
     public virtual ICollection<Accommodation> Accommodations { get; set; } = new List<Accommodation>();

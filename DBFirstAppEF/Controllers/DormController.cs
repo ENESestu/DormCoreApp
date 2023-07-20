@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DBFirstAppEF.Data;
 using DBFirstAppEF.Models;
+using DBFirstAppEF.Helpers;
 
 namespace DBFirstAppEF.Controllers
 {
@@ -22,9 +23,9 @@ namespace DBFirstAppEF.Controllers
         // GET: Dorm
         public async Task<IActionResult> Index()
         {
-              return _context.Dorms != null ? 
-                          View(await _context.Dorms.ToListAsync()) :
-                          Problem("Entity set 'DormDatabaseContext.Dorms'  is null.");
+            return _context.Dorms != null ?
+                        View(await _context.Dorms.ToListAsync()) :
+                        Problem("Entity set 'DormDatabaseContext.Dorms'  is null.");
         }
         public async Task<IActionResult> GetByNameDorm(string s)
         {
@@ -62,10 +63,12 @@ namespace DBFirstAppEF.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Address,PhoneNumber,ImageFilePath,IsDeleted")] Dorm dorm)
+        public async Task<IActionResult> Create([Bind("Name,Address,PhoneNumber,ImageFilePath")] Dorm dorm)
         {
             if (ModelState.IsValid)
             {
+                dorm.IsDeleted = "0";
+
                 _context.Add(dorm);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -73,36 +76,55 @@ namespace DBFirstAppEF.Controllers
             return View(dorm);
         }
 
-        // GET: Dorm/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Dorms == null)
-            {
-                return NotFound();
-            }
+        //// GET: Dorm/Edit/5
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null || _context.Dorms == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var dorm = await _context.Dorms.FindAsync(id);
-            if (dorm == null)
+        //    var dorm = await _context.Dorms.FindAsync(id);
+        //    if (dorm == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(dorm);
+        //}
+        public async Task<IActionResult> AddOrEdit(int? id)
+        {
+            if (id == null)
             {
-                return NotFound();
+                return View(new Dorm());
             }
-            return View(dorm);
+            else
+            {
+                var dormModel = await _context.Dorms.FindAsync(id);
+                if (dormModel == null)
+                {
+                    return null;
+                }
+                return View(dormModel);
+            }
+            return View();
         }
 
-        // POST: Dorm/Edit/5
+
+        // POST: Dorm/AddOrEdit
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address,PhoneNumber,ImageFilePath,IsDeleted")] Dorm dorm)
+        public async Task<IActionResult> AddOrEdit(int id, [Bind("Id,Name,Address,PhoneNumber,ImageFilePath,IsDeleted")] Dorm dorm)
         {
-            if (id != dorm.Id)
-            {
-                return NotFound();
-            }
+            //if (id != dorm.Id)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
+                //Update operation 
                 try
                 {
                     _context.Update(dorm);
@@ -119,10 +141,53 @@ namespace DBFirstAppEF.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                //return RedirectToAction(nameof(Index));
+                return Json(new { isValid = true, html = Helper.RenderRazorViewToSting(this, "_ViewAllDorm", _context.Dorms.ToList()) });
             }
-            return View(dorm);
+            //return View(dorm);
+            return Json(new { isValid = false, html = Helper.RenderRazorViewToSting(this, "AddOrEdit", dorm) });
         }
+
+        //--------------------------------------------------------------------------------------------
+
+        // POST: Dorm/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+
+        // Add Or Edit olarak yeniden yazdım yukarıda
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address,PhoneNumber,ImageFilePath,IsDeleted")] Dorm dorm)
+        //{
+        //    if (id != dorm.Id)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(dorm);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!DormExists(dorm.Id))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(dorm);
+        //}
 
         // GET: Dorm/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -156,14 +221,14 @@ namespace DBFirstAppEF.Controllers
             {
                 _context.Dorms.Remove(dorm);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DormExists(int id)
         {
-          return (_context.Dorms?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Dorms?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

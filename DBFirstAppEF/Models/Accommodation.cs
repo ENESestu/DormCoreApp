@@ -11,6 +11,8 @@ public partial class Accommodation
 {
     [Key]
     [Column("ID")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
     public int Id { get; set; }
 
     [Column("DATE_START", TypeName = "date")]
@@ -22,7 +24,7 @@ public partial class Accommodation
     [Column("IS_DELETED")]
     [StringLength(2)]
     [Unicode(false)]
-    public string IsDeleted { get; set; } = null!;
+    public string? IsDeleted { get; set; }
 
     [Column("DORM_ID")]
     public int DormId { get; set; }

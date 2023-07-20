@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,11 +18,24 @@ namespace DBFirstAppEF.Controllers
         }
 
         // GET: Users
+        //public async Task<IActionResult> Index()
+        //{
+        //      return _context.Users != null ? 
+        //                  View(await _context.Users.ToListAsync()) :
+        //                  Problem("Entity set 'DormDatabaseContext.Users'  is null.");
+        //}
+
+
         public async Task<IActionResult> Index()
         {
-              return _context.Users != null ? 
-                          View(await _context.Users.ToListAsync()) :
-                          Problem("Entity set 'DormDatabaseContext.Users'  is null.");
+            var users = await _context.Users.ToListAsync();
+            foreach (var item in users)
+            {
+                item.FirstName =item.FirstName.Substring(0,1) + "******";
+                item.LastName=item.LastName.Substring(0,1) + "******";
+            }
+
+            return View(users);
         }
 
         // GET: Users/Details/5
@@ -56,8 +67,9 @@ namespace DBFirstAppEF.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,PhoneNumber,EMail,UserName,Password,PictureFilePath,IsDeleted")] User user)
+        public async Task<IActionResult> Create([Bind(include:"FirstName,LastName,PhoneNumber,EMail,UserName,Password,PictureFilePath")] User user)
         {
+            
             if (ModelState.IsValid)
             {
                 _context.Add(user);

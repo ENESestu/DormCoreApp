@@ -3,10 +3,10 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="card-group">
-  
-    @foreach (var dorm in Model)
-    {
+@foreach (var dorm in Model)
+{
+    <div class="card-group">
+
         <div class="card">
             <div class="card-header">
                 @dorm.Name
@@ -18,10 +18,11 @@
                 <a href="#" class="btn btn-primary">Go somewhere</a>
             </div>
         </div>
-    }
-</div>
+
+    </div>
+}
 
 @section SagKolon
-{
+    {
     @Html.Partial("Search")
 }

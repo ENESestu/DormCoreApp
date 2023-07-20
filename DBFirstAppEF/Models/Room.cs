@@ -12,6 +12,8 @@ public partial class Room
 {
     [Key]
     [Column("ID")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
     public int Id { get; set; }
 
     [Column("ROOM_NO")]
@@ -25,7 +27,7 @@ public partial class Room
 
     [Column("IS_DELETED")]
     [StringLength(2)]
-    public string IsDeleted { get; set; } = null!;
+    public string? IsDeleted { get; set; }
 
     [Column("DORM_ID")]
     public int? DormId { get; set; }

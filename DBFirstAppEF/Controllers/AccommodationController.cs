@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DBFirstAppEF.Data;
 using DBFirstAppEF.Models;
+using System.Security.AccessControl;
 
 namespace DBFirstAppEF.Controllers
 {
@@ -42,7 +43,6 @@ namespace DBFirstAppEF.Controllers
 
             return View(accommodation);
         }
-
         // GET: Accommodation/Create
         public IActionResult Create()
         {
@@ -57,10 +57,15 @@ namespace DBFirstAppEF.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DateStart,DateEnd,IsDeleted,DormId,RoomNo,UserId")] Accommodation accommodation)
+        public async Task<IActionResult> Create([Bind("Id,DormId,RoomNo,UserId")] Accommodation accommodation)
         {
             if (ModelState.IsValid)
             {
+                var date = DateTime.Now;
+                accommodation.IsDeleted = "0";
+                accommodation.DateEnd = DateTime.Parse(date.ToString("MM/dd/yyyy"));
+                accommodation.DateStart = DateTime.Parse(date.ToString("MM/dd/yyyy"));
+
                 _context.Add(accommodation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
